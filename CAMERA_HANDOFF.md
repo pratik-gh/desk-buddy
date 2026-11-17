@@ -105,3 +105,4 @@ Turn on 2FA for the GitHub account that hosts the page, because anyone who can p
 - **Camera hours:** off from 22:00 to 07:00, whatever mood is set.
 - **Permission prompt** appears only from a tap on the toggle. Automatic starts (on load, when the page becomes visible again, at 07:00) only run if permission is already granted. Otherwise the toggle turns off with a message.
 - **Away for 10 minutes → sleepy** applies only in auto mood, not when a mood is picked by hand.
+- **Arrival reaction** is surprised → excited (star eyes and confetti), not surprised → happy. Changed 2026-11-12 when the excited mood was added.
