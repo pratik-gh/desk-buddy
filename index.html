@@ -18,18 +18,28 @@
 <div id="camDot" hidden></div>
 
 <div id="panel" hidden>
-  <h3>Mood</h3>
+  <div class="head"><h3>Mood</h3><button id="close">Done</button></div>
   <div id="moods"></div>
   <div class="opts">
     <label><input type="checkbox" id="optClock"> Clock</label>
     <label><input type="checkbox" id="opt24"> 24-hour</label>
+    <label>Font <select id="optFont">
+      <option value="sans">Sans</option>
+      <option value="thin">Thin</option>
+      <option value="serif">Serif</option>
+      <option value="mono">Mono</option>
+    </select></label>
+    <label>Size <select id="optSize">
+      <option value="small">Small</option>
+      <option value="medium">Medium</option>
+      <option value="large">Large</option>
+    </select></label>
+  </div>
+  <div class="opts">
     <label>Face <select id="optStyle">
       <option value="classic">Classic</option>
       <option value="yellow">Yellow</option>
     </select></label>
-    <button id="close">Done</button>
-  </div>
-  <div class="opts">
     <label><input type="checkbox" id="optCam"> Camera</label>
     <label><input type="checkbox" id="optFlip"> Flip camera direction</label>
   </div>

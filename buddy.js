@@ -28,9 +28,16 @@ addEventListener('resize', resize); resize();
 
 /* ---------- settings ---------- */
 const KEY = 'buddy-settings-v2';
-let settings = { mood: 'auto', clock: true, h24: false, camera: false, camFlip: false, style: 'classic' };
+let settings = { mood: 'auto', clock: true, h24: false, camera: false, camFlip: false, style: 'classic', font: 'sans', clockSize: 'medium' };
 try { Object.assign(settings, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(settings)); } catch (e) {} };
+// System fonts only, so nothing is fetched from a font CDN (the CSP would block it anyway).
+const FONTS = {
+  sans:  { time: 600, date: 500, family: 'system-ui,-apple-system,sans-serif' },
+  thin:  { time: 200, date: 300, family: 'system-ui,-apple-system,sans-serif' },
+  serif: { time: 500, date: 400, family: 'Georgia,"Noto Serif",serif' },
+  mono:  { time: 500, date: 400, family: '"Roboto Mono","Droid Sans Mono",ui-monospace,monospace' } };
+const CLOCK_SIZES = { small: 0.8, medium: 1, large: 1.2 };
 const qp = new URLSearchParams(location.search).get('mood');   // ?mood=happy for testing
 
 /* ---------- moods ----------
@@ -611,13 +618,15 @@ function draw(now) {
     let h = d.getHours(); const m = String(d.getMinutes()).padStart(2, '0');
     if (!settings.h24) h = h % 12 || 12;
     ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+    const F = FONTS[settings.font] || FONTS.sans;
+    const k = CLOCK_SIZES[settings.clockSize] || 1, dateSize = H * 0.046 * k, dateY = H * 0.955;
     ctx.fillStyle = `rgba(${S.clock},0.78)`;
-    ctx.font = `600 ${H * 0.075}px system-ui,-apple-system,sans-serif`;
-    ctx.fillText(`${h}:${m}`, W / 2, H * 0.875);
+    ctx.font = `${F.time} ${H * 0.095 * k}px ${F.family}`;
+    ctx.fillText(`${h}:${m}`, W / 2, dateY - dateSize * 1.5);
     ctx.fillStyle = `rgba(${S.clock},0.5)`;
-    ctx.font = `500 ${H * 0.036}px system-ui,-apple-system,sans-serif`;
+    ctx.font = `${F.date} ${dateSize}px ${F.family}`;
     ctx.fillText(d.toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short' }),
-                 W / 2, H * 0.94);
+                 W / 2, dateY);
     ctx.textAlign = 'start';
   }
   ctx.restore();
@@ -689,14 +698,18 @@ const moodsEl = document.getElementById('moods');
   moodsEl.appendChild(b);
 });
 const optClock = document.getElementById('optClock'), opt24 = document.getElementById('opt24');
-const optStyle = document.getElementById('optStyle');
+const optStyle = document.getElementById('optStyle'), optFont = document.getElementById('optFont');
+const optSize = document.getElementById('optSize');
 optStyle.onchange = () => { settings.style = optStyle.value; save(); };
+optFont.onchange = () => { settings.font = optFont.value; save(); };
+optSize.onchange = () => { settings.clockSize = optSize.value; save(); };
 optClock.onchange = () => { settings.clock = optClock.checked; save(); };
 opt24.onchange = () => { settings.h24 = opt24.checked; save(); };
 document.getElementById('close').onclick = () => { panel.hidden = true; };
 function refresh() {
   moodsEl.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.m === settings.mood));
   optClock.checked = settings.clock; opt24.checked = settings.h24; optStyle.value = settings.style;
+  optFont.value = settings.font; optSize.value = settings.clockSize;
   optCam.checked = settings.camera; optFlip.checked = settings.camFlip;
 }
 function openPanel() { if (down) down.moved = true; refresh(); panel.hidden = false; }
